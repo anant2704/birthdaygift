@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Prachi!</title>
+    
+    <!-- Import elegant fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Import Confetti & 3D Tilt Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+    <style>
+        /* Global Setup */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================================
+           1. THE LOCK SCREEN (THE GAME)
+           ========================================= */
+        #lock-screen {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 50px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        #lock-screen h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        #lock-screen p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            outline: none;
+            width: 80%;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: #1e1b4b;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Poppins', sans-serif;
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .hint-btn {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .hint-btn:hover {
+            color: #ffd700;
+        }
+
+        .error-message {
+            color: #ff4757;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* =========================================
+           2. THE MAIN SURPRISE REVEAL
+           ========================================= */
+        #main-content {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 100px;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-top: 60px;
+            animation: fadeInDown 1.5s ease forwards;
+        }
+
+        .header-container h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5.5rem;
+            margin: 0;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .header-container h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-top: 10px;
+            color: #e2e8f0;
+        }
+
+        /* Photo Gallery */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px auto;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .photo-card {
+            background: white;
+            padding: 15px 15px 50px 15px;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transform-style: preserve-3d;
+        }
+
+        .photo-card img {
+            width: 250px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 4px;
+            transform: translateZ(30px);
+        }
+
+        /* Digital Letter Section */
+        .letter-container {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 700px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 2s ease forwards 1s; /* Delayed fade in */
+            opacity: 0;
+        }
+
+        .letter-container h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #ffd700;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .letter-container p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsiveness Setup */
+        @media (max-width: 768px) {
+            .header-container h1 { font-size: 3.5rem; }
+            .header-container h2 { font-size: 1rem; letter-spacing: 4px; }
+            .photo-card img { width: 100%; height: auto; }
+            .gallery { gap: 20px; }
+            .letter-container { padding: 25px; }
+            .letter-container h3 { font-size: 2.5rem; }
+            .letter-container p { font-size: 1rem; }
+            #lock-screen { padding: 40px 20px; }
+            input[type="text"], button { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. The Lock Screen -->
+    <div id="lock-screen">
+        <h1>Hey Prachi!</h1>
+        <p>Enter the secret word to unlock your surprise.</p>
+        
+        <input type="text" id="passwordInput" placeholder="Type here..." autocomplete="off">
+        <button onclick="checkPassword()">Unlock 🔓</button>
+        
+        <div class="hint-btn" onclick="showHint()">Need a hint?</div>
+        <div id="errorMsg" class="error-message">Oops! That's not the secret word. Try again!</div>
+    </div>
+
+    <!-- 2. The Main Birthday Content -->
+    <div id="main-content">
+        <div class="header-container">
+            <h1>Happy Birthday Prachi!</h1>
+            <h2>JUNE 29, 2026</h2>
+        </div>
+
+        <!-- 3D Interactive Gallery -->
+        <div class="gallery">
+            <div class="photo-card" data-tilt data-tilt-glare data-tilt-max-glare="0.3" data-tilt-scale="1.05"><img src="66873.jpeg" alt="Prachi in Green Dress"></div>
+            <div class="photo-card" data-tilt data-tilt-glare data-tilt-max-glare="0.3" data-tilt-scale="1.05"><img src="66892.jpeg" alt="Prachi Smiling"></div>
+            <div class="photo-card" data-tilt data-tilt-glare data-tilt-max-glare="0.3" data-tilt-scale="1.05"><img src="66869.jpeg" alt="Prachi Portrait"></div>
+            <div class="photo-card" data-tilt data-tilt-glare data-tilt-max-glare="0.3" data-tilt-scale="1.05"><img src="47787.jpeg" alt="Prachi at Sunset"></div>
+            <div class="photo-card" data-tilt data-tilt-glare data-tilt-max-glare="0.3" data-tilt-scale="1.05"><img src="47788.jpeg" alt="Prachi Scenic Sunset"></div>
+        </div>
+
+        <!-- Heartfelt Digital Letter -->
+        <div class="letter-container">
+            <h3>To the amazing birthday girl,</h3>
+            <p>Happy Birthday, Prachi! I wanted to do something a little different this year to celebrate you. From our fun adventures to the quiet moments in between, I cherish every memory we make together.</p>
+            <p>I hope your day is as beautiful, bright, and wonderful as you are. Keep smiling, keep shining, and let's make this next year the best one yet.</p>
+            <p><strong>With love,</strong><br>Your Favorite Person</p>
+        </div>
+    </div>
+
+    <!-- The Background Music Audio Element -->
+    <audio id="birthdayAudio" src="song.mp3"></audio>
+
+    <script>
+        // --- HINT LOGIC ---
+        function showHint() {
+            alert("Hint: Where did we get lost in Pune?");
+        }
+
+        // --- GAME LOGIC ---
+        function checkPassword() {
+            const userInput = document.getElementById('passwordInput').value.toLowerCase().trim();
+            const secretPassword = "29062004"; // Change your password here
+
+            if (userInput === secretPassword) {
+                const lockScreen = document.getElementById('lock-screen');
+                lockScreen.style.transform = 'scale(0.9)';
+                lockScreen.style.opacity = '0';
+                
+                // Play the music (this works because the user clicked a button!)
+                const bgMusic = document.getElementById('birthdayAudio');
+                bgMusic.play().catch(error => console.log("Audio play failed, usually due to browser policies.", error));
+                
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    document.getElementById('main-content').style.display = 'flex';
+                    
+                    // Trigger the special star confetti!
+                    fireStarConfetti();
+                }, 800);
+            } else {
+                document.getElementById('errorMsg').style.opacity = '1';
+                setTimeout(() => {
+                    document.getElementById('errorMsg').style.opacity = '0';
+                }, 3000);
+            }
+        }
+
+        document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // --- CUSTOM STAR CONFETTI LOGIC ---
+        function fireStarConfetti() {
+            var duration = 5000; 
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                // Blast from the left using STAR shapes
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    shapes: ['star', 'circle'],
+                    colors: ['#ffd700', '#ff8c00', '#ff69b4'],
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+                }));
+                // Blast from the right using STAR shapes
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    shapes: ['star', 'circle'],
+                    colors: ['#ffd700', '#ff8c00', '#ff69b4'],
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+                }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
